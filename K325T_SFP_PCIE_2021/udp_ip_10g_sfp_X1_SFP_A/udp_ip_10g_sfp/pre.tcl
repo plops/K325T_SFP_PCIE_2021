@@ -1,0 +1,1 @@
+set_property is_loc_fixed false [get_ports -filter { IS_LOC_FIXED == "TRUE" } ]

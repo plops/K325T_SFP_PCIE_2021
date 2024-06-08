@@ -1,0 +1,1 @@
+read_xdc D:/vivado_project/miz7035/udp_ip_10g_sfp/udp_ip_10g_sfp.srcs/constrs_1/new/udp_ip_10g.xdc

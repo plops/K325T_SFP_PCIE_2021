@@ -1,0 +1,11 @@
+## WIN10 测试PCIE驱动
+按照测试文件进行，运行安装程序setup_dbg.exe会出现不支持的版本。
+解决方式：
+右键->属性->兼容性设置
+勾选以兼容性运行这个程序，选择win7
+
+## WIN10 Testing PCIe Driver  
+Follow the test document, running the installer setup_dbg.exe will result in an unsupported version.  
+Solution:  
+Right-click -> Properties -> Compatibility settings  
+Check the box to run this program in compatibility mode, select Win7

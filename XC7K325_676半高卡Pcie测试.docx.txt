@@ -1,0 +1,460 @@
+﻿邮箱906606596@qq.com  电话18008057317 
+赛特凌威科技
+
+
+Scope 
+   
+The scope of this document encompasses detailed procedures for testing various functionalities of a PCIe compatible board within a specified system environment. 
+   
+The intent of this document is to serve as a comprehensive guide for users who need to validate the primary interfaces and components of the PCIe board. It aims to ensure that users can perform tests efficiently and understand the outcome of each test based on the provided instructions and expected results.
+
+
+Summary
+
+- PCIE Testing Overview 
+  - Utilizes open-source riffa code.  
+  - Compatible only with WIN7 64-bit systems.  
+  - Other functionalities require different learning codes provided.  
+  - PCIe functionality verified.  
+  - Options to download bit or mcs files to board or flash.  
+  - Default board program is PCIe firmware.  
+  - PCIe GEN2.0 X4 interface with 20Gbps theoretical bandwidth.  
+  - No external power needed for PCIe.  
+   
+- Steps for PCIe Testing:  
+  - Step One: Board installation into computer's PCIe slot.  
+  - Step Two: Download riffa FPGA code to the board.  
+  - Step Three: Locate and reinstall driver from specific directory.  
+  - If driver issues arise, disable digital signature enforcement and restart the computer.  
+   
+- Network Card Testing (1000M network):  
+  - Both network cards on the board are tested similarly.  
+  - Use 1000M ethernet cable for connections; should show 1G connection on the computer.  
+  - Program download to FPGA required before cable connection.  
+  - ARP binding necessary for board's IP address.  
+  - LEDs on RJ45 ports indicate proper connection.  
+  - Computer side IP address configuration explained.  
+  - Command Prompt used for ARP binding.  
+  - Network debugging tool setup and data sending instructions provided.  
+  - Network card and PCIe tests are more complex than other tests.  
+    
+- HDMI Display Testing:  
+  - Two codes provided: one with static colorful bars, another responding to button K3 for different displays.  
+   
+- Optical Fiber and SATA Testing:  
+  - ibert tests performed.  
+  - Reference materials with 10 Gigabit Ethernet UDP test code available for K7.  
+  - Specific instructions for 6Gbps SATA and 10Gbps optical fiber ibert tests.  
+  - Vivado's PRBS settings and reset instructions.  
+   
+- USB to TTL COM Port Testing:  
+  - Requires CH340 driver installation.  
+  - Use of serial port debugging tool with specific baud rate.  
+  - Instructions for selecting virtual COM port and testing LED responses.  
+   
+- SD Card Testing:  
+  - Involves mini SD card and program download.  
+  - Button K2 initiates LED changes.  
+   
+- DDR3 Testing:  
+  - Simplest test; pass indicated by specific LEDs being lit.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ K3250 
+
+
+
+PCIE 测试
+我们使用的是riffa开源的代码，并且只能用在WIN7 64位系统上。其他系统不能用。用户需要其他的功能可以参考我给的其他学习代码。我们在这里只是验证PCIe的功能。
+
+
+你可以选择下载bit文件到板子上，也可以下载mcs文件到板子的flash里面。我们测试时选择的下载bit文件。比较方便。板子上出厂的默认程序就是PCIe的固件
+
+
+Pcie接口会主动给板卡供电，在使用PCIE时，不用外加电源。我们的PCIe接口是GEN2.0 X4，理论速度是20G bps的带宽
+
+
+第一步：把板子插到电脑的PCIE接口，板卡的物理接口是X4的尺寸。你的电脑主板至少要有一个能插这个卡的PCIE接口。如果你的电脑是集成显卡，那么可以直接插在空闲的PCIE插口。如果你的电脑有两个PCIEX16的接口。或者一个X16一个X8。用户需要注意的是，主板的副PCIEX16接口。一般实际信号只有X4，有的做到了X8，有的只有X1，副插口只是外观做的兼容X16实际上并不是X16的数据链。
+
+
+第二步：把开源的riffa提供的FPGA代码下载到板子上。如果是下载的是bit文件，需要重启电脑，但是主板不要断电。如果是下载的是mcs文件，需要关机在开机，这样让FPGA重新加载。
+下图是下载bit文件后，选择电脑重新启动，这样主板不会断电。
+
+
+
+
+PCIe Testing
+We use the open-source code from riffa (https://github.com/KastnerRG/riffa), and it can only be used on a WIN7 64-bit system. Other systems are not supported. Users who need other functionalities can refer to other learning codes I have provided. Here, we are merely verifying the functionality of PCIe.
+
+
+You can choose to download the bit file onto the board, or you can download the mcs file into the board's flash. During our tests, we chose to download the bit file, which is more convenient. The default program that comes with the board is the PCIe firmware.
+
+
+The PCIe interface actively powers the board, so there is no need for an external power source when using PCIe. Our PCIe interface is GEN2.0 X4 with a theoretical bandwidth of 20Gbps.
+
+
+Step One: Insert the board into the PCIe slot of the computer. The physical interface of the board is X4 size. Your computer's motherboard must have at least one PCIe slot that can accommodate this card. If your computer has an integrated graphics card, then you can directly insert it into a free PCIe slot. If your computer has two PCIEX16 slots, or one X16 and one X8, please note that the secondary PCIEX16 slot on the motherboard typically only carries an X4 signal. Some may have an X8 signal, while others only X1. The secondary slot is made to appear compatible with X16, but it is not actually a full X16 data link.
+
+
+Step Two: Download the open-source FPGA code provided by riffa onto the board. If you're downloading the bit file, you need to restart the computer, but do not cut the power to the motherboard. If you're downloading the mcs file, you need to turn off the computer and then turn it back on to allow the FPGA to reload.
+Below is the image showing the computer being rebooted after downloading the bit file, so the motherboard does not lose power.
+
+
+ pcie1 
+
+第三步：等待重新启动后，你可以在系统里面找到设备
+
+
+显示的是一个PCI标准 RAM控制器，但是这个并不是我们要的。要对他重新安装驱动。
+把riffa_2.0.2\riffa_2.0.2\install\windows\win7 这个目录下面有个驱动安装包。安装即可
+
+Step 3: After the restart, you can find a device within the system.  
+   
+It shows as a PCI standard RAM controller, but this is not what we want. You need to reinstall the driver for it.  
+There is a driver installation package in the directory riffa_2.0.2\riffa_2.0.2\install\windows\win7. Install it to proceed.
+
+
+ pcie3 
+
+ pcie2 
+
+
+
+
+
+如果出现感叹号，就是驱动没有安装好。这个时候你试试禁止数字签名。
+安装了setup_dbg.exe这个驱动，如果显示驱动没有安装好，可以试试重新启动电脑，一定要是重新启动电脑。
+
+If an exclamation mark appears, it indicates that the driver has not been installed properly. At this point, you should try disabling digital signature enforcement.
+After installing the setup_dbg.exe driver, if it still shows that the driver has not been installed correctly, you can try restarting the computer. Make sure to actually restart the computer.
+
+ pcie4 
+
+
+
+
+
+驱动安装好了，正常情况下是没有感叹号的。如下图这样，说明可以测试了。
+
+Once the driver is installed properly, under normal circumstances, there should be no exclamation mark. As shown in the following image, it indicates that you can proceed with testing.
+ pcie5 
+
+然后在C:\Windows\System32  这个目录找到 CMD 图标， 选择以管理员身份运行
+
+Then, navigate to the C:\Windows\System32 directory to find the CMD (Command Prompt) icon, and choose to run it as an administrator.
+
+
+ CMD 
+
+
+
+运行CMD界面
+
+Run CMD interface
+ pcie6 
+
+ 在DOS界面输入信息 cd C:\Program Files \Riffa\c_c++  然后按Enter键
+
+In the DOS interface, enter the command cd C:\Program Files\Riffa\c_c++ and then press the Enter key.
+
+
+ pcie7 
+
+
+
+按了Enter键后，会出现如下图的显示。表示已经进入Riffa的安装路径去了
+
+
+
+
+After pressing the Enter key, the display as shown in the following figure will appear. This indicates that you have entered the installation path of Riffa.
+
+
+
+
+
+
+
+
+
+
+ pcie8 
+
+
+
+
+
+然后在输入 testutil.exe 0  ,然后在按Enter 键。
+
+
+Then type "testutil.exe 0", and then press the Enter key.
+
+
+ pcie9 
+
+
+
+
+
+
+
+
+
+
+
+DOS界面会出现找到板卡的信息。
+The information of the found card will appear in the DOS interface.
+
+
+ pcie10 
+
+
+
+ 再输入testutil.exe 2 0 0 10000000  按Enter键 测试板卡
+Enter testutil.exe 2 0 0 10000000 and press the Enter key to test the card.
+
+
+ pcie11 
+
+
+
+
+
+
+
+下面就是测试数据，GEN2.0 X4的实际带宽根据自己的电脑配置有关系，可能你测试的比我的高，可能比我的低。不过一般都是在1500M字节左右。有的电脑可以上1600多M字节每秒。
+Below is the test data. The actual bandwidth of GEN2.0 X4 depends on your computer configuration, so it's possible that your test results could be higher or lower than mine. However, generally, it is around 1500M bytes. Some computers can reach over 1600M bytes per second.
+ pcie 
+
+
+
+2：说说测试1000M网络，系统WIN7或者WIN10. 板子上两个网卡的测试方式都是一样的。 88E1111是gimm模式。用1000M网线和电脑网卡连接在一起。然后电脑相应的网卡会显示1G连接上了。
+注意一定要先下载程序到FPGA,再连接网线到电脑。再arp绑定板子的IP地址。我们把arria_v_sof文件夹里面的rgmii_a.sof下载到FPGA里面去。注意下载完之后一定要按一下板子上的K2按键，把程序做一下手动复位。才能正常通信。你也可以自己加上程序自动复位。
+电脑和网卡连接正常的话，RJ45 A口的LED10  LED11会亮起来
+
+Let's talk about testing a 1000M network on systems with WIN7 or WIN10. The testing method for the two network cards on the board is the same. The 88E1111 is in GIMM mode. Use a 1000M ethernet cable to connect the computer's network card. Then, the corresponding network card on the computer will display a 1G connection.
+
+
+Please make sure to download the program to the FPGA before connecting the ethernet cable to the computer. Then bind the board's IP address with ARP. We will download the rgmii_a.sof file from the arria_v_sof folder to the FPGA. After downloading, be sure to press the K2 button on the board to manually reset the program. Only then can normal communication be established. You can also add an automatic reset to the program if you like.
+
+
+If the connection between the computer and the network card is normal, the LED10 and LED11 on the RJ45 A port will light up.
+ RJ45A 
+
+
+
+
+
+
+
+
+
+电脑和网卡连接正常的话，RJ45 B口的LED12 和 LED13会亮起来
+If the computer and network card are connected properly, the LEDs 12 and LED 13 on the RJ45 B port will light up.
+ RJ45B 
+
+
+
+可以看到本地连接显示1G
+You can see that the local connection displays 1G.
+ 1G显示 
+
+
+
+然后设置电脑端的IP地址192.168.1.37。掩码255.255.255.0。这些在程序里面是可以改的。
+Then set the IP address of the computer side to 192.168.1.37. Subnet mask 255.255.255.0. These can be changed in the program.
+ 电脑IP地址RJ 
+
+然后在WINDOS菜单中找到命令提示符，选择以管理员身份运行，这一步是为了绑定网卡的IP地址和物理地址，这个程序里面都是可以修改的。需要管理员身份运行模式
+ CMD 
+
+
+
+注意每次开机后要重新绑定。
+在下面的界面 输入arp -s 192.168.1.183 01-60-6E-11-02-0F
+Arp -a 是查询是否绑定成功。成功就就会显示。注意绑定地址的时候有空格。
+
+Please note that you need to rebind after each startup.  
+In the interface below, enter arp -s 192.168.1.183 01-60-6E-11-02-0F  
+arp -a is used to check if the binding is successful. If it is successful, it will be displayed. Note that there are spaces when entering the binding address.
+
+
+ arp 
+
+
+
+
+
+
+
+然后就是打开网络调试工具， 按照图的要求设置，选择192.168.1.37
+And then open the network debugging tool, set it according to the requirements in the diagram, select 192.168.1.37
+ net 
+
+
+
+
+
+
+
+
+
+
+
+
+
+端口号写8080 ，点击打开
+Set the port number to 8080 and click to open.
+ net2 
+
+
+
+
+
+ net3 
+
+注意设置的步骤错了，收发数据不行。我有时候弄错了，只能接受到数据发不出去。
+
+
+在发送区域填写你要发送的数据，板子收到数据会一直发给电脑
+如下图
+Be aware that the steps for setting up are incorrect, which results in the inability to send and receive data. Sometimes I make a mistake and can only receive data without being able to send it out.
+
+In the sending area, fill in the data you want to send. Once the board receives the data, it will continuously send it to the computer.
+As shown in the figure below.
+
+
+ 1000M 
+
+
+
+网卡的测试过程大概就是这样的，RJ45A和RJ45B两个口测测试方式一样，刚刚已经arp绑定了板子的IP地址，测试另外一个网口，就不用再绑定，但是要注意的是，每次开机如果要测试这个就必须重新绑定。
+
+
+只有网卡和PCIe测试麻烦一些。其他测试相对都比较简单
+
+
+HDMI显示测试，有2个代码，其中一个代码只显示了很多彩条不变化，例外一个代码下载进去可以按按键K3, 会显示不同的信息。
+
+
+The testing process for the network card is roughly as follows: the RJ45A and RJ45B ports are tested in the same way. The board's IP address has already been ARP-bound, so when testing the other network port, there's no need to bind it again. However, it's important to note that each time the machine is booted, if you want to test this, you must rebind it.
+
+
+Only the network card and PCIe tests are a bit more troublesome. Other tests are relatively simple.
+
+
+For the HDMI display test, there are 2 codes. One of the codes only displays many colorful bars that do not change. The other code, once downloaded, allows you to press the K3 button, which will display different information.
+ h1 
+
+
+
+
+
+ h2 
+
+ h3 
+
+
+
+光纤接口和硬盘SATA我只做了ibert测试。我提供的参考学习里面有万兆网络UDP测试代码，可以移植过来。都是K7的
+SATA的6Gbps ibert测试，这个测试需要把硬盘接口的TX和RX短接。这个转接线市面上没有，只有自己动手做。测试ibert的时候要注意，vivado默认显示的是PRBS7bit，如果你需要选择其他的PRBS, RX和TX必须选择一样的。选择了之后还要点一下RESET
+
+I performed an ibert test on the optical fiber interface and the hard drive SATA. The reference materials I provided contain 10 Gigabit Ethernet UDP test code, which can be ported over. These are all for K7.
+
+
+For the 6Gbps SATA ibert test, you need to short-circuit the TX and RX of the hard drive interface. You cannot find this kind of adapter cable on the market; you have to make it yourself. When testing ibert, be aware that Vivado defaults to showing PRBS7bit. If you need to select a different PRBS, RX and TX must be set to the same one. After selecting, you also need to press RESET.
+ 6G 
+
+光纤接口10Gbps ibert测试，光纤买双LC的。就是光纤上TX和RX是分开的两个孔。同样的道理需要把光纤的RX和TX短接。买光纤线的时候一定要注意。买光纤线TX和RX是分开的那种线。测试ibert的时候要注意，vivado默认显示的是PRBS7bit，如果你需要选择其他的PRBS, RX和TX必须选择一样的。选择了之后还要点一下RESET
+
+
+
+For the 10Gbps optical fiber interface ibert test, buy the fiber with dual LC connectors. This means the TX and RX on the fiber are separate holes. Similarly, you need to short-circuit the fiber's RX and TX. Be sure to pay attention when purchasing the fiber cable; you need the type where TX and RX are separate. When testing ibert, be aware that Vivado defaults to showing PRBS7bit. If you need to select a different PRBS, RX and TX must be set to the same one. After selecting, you also need to press RESET.
+
+
+
+ 10G 
+
+
+
+USB转TTL COM串口测试，需要安装CH340的驱动。打开串口调试工具。波特率选择9600，波特率可以修改程序来修改。
+
+
+选择电脑虚拟的串口号，可以看到我的电脑设备管理器虚拟的是COM7，用户的电脑根基实际情况定
+
+USB to TTL COM Port Testing requires the installation of the CH340 driver. Open the serial port debugging tool. Select a baud rate of 9600; the baud rate can be changed by modifying the program.
+
+Choose the computer's virtual COM port number. You can see that my computer's Device Manager has virtualized it as COM7; the user's computer should determine the actual situation.
+
+
+
+
+ com1dfrg 
+
+
+
+打开串口软件，选择COM7，波特率9600， 发送端写数字。点击SEND,板子上的LED灯会变化。交替按下K3和K2板子会收到welcome , 交替按一次 收到一次
+拔USB转串口线的时候，要关闭串口工具
+Open the serial port software, select COM7, baud rate 9600, and write numbers on the sending end. Click SEND, and the LED light on the board will change. Alternately pressing K3 and K2 will make the board receive "welcome", each alternating press will be received once.  
+When unplugging the USB to serial cable, you need to close the serial port tool.
+
+
+ cmddddddds 
+
+
+
+SD卡的测试，使用迷你SD卡，程序下载到板子上，按下按键K2(HDMI旁边的按键)，LED灯LED0到LED3会变化。
+
+
+DDR3测试是最简单的，如果DDR3测试正常，只有LED0和LED2亮。如果不是这样的状态。DDR3测试没有通过。
+
+SD card test: Use a mini SD card and download the program to the board. Press button K2 (the button next to HDMI), and the LED lights from LED0 to LED3 will change.  
+   
+The DDR3 test is the simplest. If the DDR3 test is normal, only LED0 and LED2 will be lit. If it is not in this state, the DDR3 test has not passed.
+
+
+
+
+
+
+
+
+Description of the source code:
+
+
+
+The source code for the project includes several components centered around a Kintex-7 FPGA for a PCIe card with a variety of interfaces such as SFP+, Gigabit Ethernet, DDR3, HDMI, SD card, UART, and SATA.
+
+Here's a summary of the subprojects and their potential purposes based filenames:
+1. PCIe with RIFFA: The files under riffa_driver/ and directories like riffa_2.1_pcie-driver-win7/ suggest there's a subproject involving the RIFFA framework, which is often used for FPGA and CPU communication over PCIe.
+2. PCIe Testing: There are documents like ./XC7K325_676半高卡Pcie测试.docx.pdf that suggest testing for the PCIe interface.
+3. FPGA IP Cores and Implementation: There are various directories with names like udp_ip_10g_sfp_X1_SFP_A and k7325_PCIe_DMA_V2, which seem to contain Vivado projects and source files for FPGA IP core development and example implementations.
+4. Ethernet Communication: IP cores and test benches related to 10 Gigabit Ethernet suggest a subproject for Ethernet communication interfaces.
+5. FPGA Configuration and Bitstream Generation: Files with extensions .bit, .mcs, .prm, and .dcp are related to the synthesis, implementation, and bitstream generation processes of the FPGA design.
+
+For human-readable files to review, I would recommend the following:
+   * ./XC7K325_676半高卡Pcie测试.docx.pdf and ./win10系统安装需要注意的.txt likely contain documentation or instructions regarding the PCIe testing and Windows 10 system installation notes.
+   * ./riffa_2.1_pcie-driver-win7/README.txt and other README files for understanding the RIFFA driver usage and installation.
+   * .xdc files for the constraints used during the FPGA implementation, which can be found under the ./udp_ip_10g_sfp_X1_SFP_A/ directory and similar directories for other subprojects.
+   * Vivado project files (.xpr) which can be opened with Xilinx Vivado Design Suite to get an overview of the project settings and structure.
+   * If there are .vhd or .v files that are not part of an auto-generated directory, these would likely contain the source code for the FPGA design components and are worth reviewing.
+On github:
+https://github.com/TommyE79/SITLINV-FPGA_Board Repo by a german guy
