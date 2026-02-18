@@ -1,3 +1,5 @@
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/plops/K325T_SFP_PCIE_2021)
+
 # K325T_SFP_PCIE_2021
 
 A dual-subsystem FPGA design for the Xilinx Kintex-7 XC7K325T FPGA, implementing high-speed PCIe Gen2 x4 DMA transfers and 10 Gigabit Ethernet UDP/IP networking over SFP+.
